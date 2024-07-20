@@ -361,3 +361,4 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/src/Services/Papyrus.Docs.DocumentApi/appsettings.Development.override.json
