@@ -40,7 +40,7 @@ namespace Papyrus.Docs.AuthApi.Extensions
                     {
                         ValidIssuer = issure,
                         ValidAudience = audience,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key!)),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
                         ValidateIssuer = false,
                         ValidateAudience = false,
                         ValidateLifetime = true,

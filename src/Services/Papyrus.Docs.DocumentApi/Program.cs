@@ -2,6 +2,8 @@ using Papyrus.Docs.DocumentApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -22,6 +24,8 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
