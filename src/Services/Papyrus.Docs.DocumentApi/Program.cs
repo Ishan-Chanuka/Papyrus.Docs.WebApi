@@ -1,11 +1,25 @@
+using Papyrus.Docs.DocumentApi.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Extension methods for adding services to the container
+builder.Services.AddDbContextExtension(builder.Configuration);
+builder.Services.AddRepositoriesExtension();
+
+
+// environment specific configuration
+builder.Configuration
+    .SetBasePath(builder.Environment.ContentRootPath)
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+    .AddJsonFile("appsettings.Development.override.json", optional: true)
+    .AddEnvironmentVariables();
 
 var app = builder.Build();
 
@@ -23,3 +37,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+app.ApplyMigrationsExtension();
