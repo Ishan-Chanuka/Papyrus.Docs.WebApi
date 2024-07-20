@@ -1,0 +1,6 @@
+@Papyrus.Docs.GatewayApi_HostAddress = http://localhost:5176
+
+GET {{Papyrus.Docs.GatewayApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

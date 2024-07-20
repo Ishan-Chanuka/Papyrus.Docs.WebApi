@@ -11,9 +11,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Intergration", "Intergratio
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{235DFA79-A12A-44B4-9A3C-4EFF031D9E38}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Papyrus.Docs.AuthApi", "src\Services\Papyrus.Docs.AuthApi\Papyrus.Docs.AuthApi.csproj", "{773DD846-5FB9-4A43-9CA8-DE4269497904}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Papyrus.Docs.AuthApi", "src\Services\Papyrus.Docs.AuthApi\Papyrus.Docs.AuthApi.csproj", "{773DD846-5FB9-4A43-9CA8-DE4269497904}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Papyrus.Docs.DocumentApi", "src\Services\Papyrus.Docs.DocumentApi\Papyrus.Docs.DocumentApi.csproj", "{22C3B10C-08F9-455A-B7D4-9319C261B7F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Papyrus.Docs.DocumentApi", "src\Services\Papyrus.Docs.DocumentApi\Papyrus.Docs.DocumentApi.csproj", "{22C3B10C-08F9-455A-B7D4-9319C261B7F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Papyrus.Docs.GatewayApi", "src\Gateway\Papyrus.Docs.GatewayApi\Papyrus.Docs.GatewayApi.csproj", "{2919520D-09BB-4E21-B512-0EAF9CED6FC3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{22C3B10C-08F9-455A-B7D4-9319C261B7F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22C3B10C-08F9-455A-B7D4-9319C261B7F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22C3B10C-08F9-455A-B7D4-9319C261B7F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2919520D-09BB-4E21-B512-0EAF9CED6FC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2919520D-09BB-4E21-B512-0EAF9CED6FC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2919520D-09BB-4E21-B512-0EAF9CED6FC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2919520D-09BB-4E21-B512-0EAF9CED6FC3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -39,6 +45,7 @@ Global
 		{235DFA79-A12A-44B4-9A3C-4EFF031D9E38} = {70E26E9F-AF8E-4C14-84E1-EC6DCD49460F}
 		{773DD846-5FB9-4A43-9CA8-DE4269497904} = {235DFA79-A12A-44B4-9A3C-4EFF031D9E38}
 		{22C3B10C-08F9-455A-B7D4-9319C261B7F8} = {235DFA79-A12A-44B4-9A3C-4EFF031D9E38}
+		{2919520D-09BB-4E21-B512-0EAF9CED6FC3} = {06C8044C-5486-4946-ACEE-072163611064}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B3DBA706-0950-4EBB-A3F3-483FFD506B98}
