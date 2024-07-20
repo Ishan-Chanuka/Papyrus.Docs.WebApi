@@ -16,5 +16,12 @@ namespace Papyrus.Docs.DocumentApi.Primitives.BaseEntity
         {
             Id = Guid.NewGuid();
         }
+
+        public void Delete(Guid userId)
+        {
+            IsDeleted = true;
+            ModifiedDate = DateTime.Now;
+            ModifiedUser = userId;
+        }
     }
 }

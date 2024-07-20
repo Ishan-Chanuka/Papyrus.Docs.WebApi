@@ -109,7 +109,7 @@
             }
         }
 
-        public async Task<ApiResponse<Guid>> DeleteMeetingMinutesAsync(Guid id)
+        public async Task<ApiResponse<Guid>> DeleteMeetingMinutesAsync(Guid id, Guid userId)
         {
             var meetingMinutes = await _context.MeetingMinutes.FirstOrDefaultAsync(mm => mm.Id == id);
 
@@ -122,7 +122,7 @@
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                meetingMinutes.IsDeleted = true;
+                meetingMinutes.Delete(userId); // delete method from BaseEntity
                 _context.MeetingMinutes.Update(meetingMinutes);
                 await _context.SaveChangesAsync();
 

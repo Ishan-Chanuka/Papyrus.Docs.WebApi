@@ -48,10 +48,10 @@ namespace Papyrus.Docs.DocumentApi.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<ApiResponse<Guid>>> DeleteMeetingMinutesAsync(Guid id)
+        [HttpDelete("{id}/{userId}")]
+        public async Task<ActionResult<ApiResponse<Guid>>> DeleteMeetingMinutesAsync(Guid id, Guid userId)
         {
-            var response = await _meetingMinuteService.DeleteMeetingMinutesAsync(id);
+            var response = await _meetingMinuteService.DeleteMeetingMinutesAsync(id, userId);
 
             return StatusCode(response.StatusCode, response);
         }
