@@ -25,6 +25,13 @@ builder.Services.AddRepositoriesExtension();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await ServiceExtension.ApplyMigrationsExtension(services);
+    await ServiceExtension.SeedDataExtension(services);
+}
+
 app.MapDefaultEndpoints();
 
 // Configure the HTTP request pipeline.
@@ -36,12 +43,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
 
-app.ApplyMigrationsExtension();
-
-app.SeedDataExtension();
+app.AddErrorHanldeMiddlewareExtension();

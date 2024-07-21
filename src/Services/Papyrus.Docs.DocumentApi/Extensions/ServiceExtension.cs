@@ -17,13 +17,13 @@ namespace Papyrus.Docs.DocumentApi.Extensions
             services.AddScoped<IMeetingMinutesService, MeetingMinutesService>();
         }
 
-        public static void ApplyMigrationsExtension(this IApplicationBuilder app)
+        public static async Task ApplyMigrationsExtension(this IServiceProvider services)
         {
-            using var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            using var serviceScope = services.GetRequiredService<IServiceScopeFactory>().CreateScope();
             var _context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>()!;
             if (_context.Database.GetPendingMigrations().Any())
             {
-                _context.Database.Migrate();
+                await _context.Database.MigrateAsync();
             }
         }
     }

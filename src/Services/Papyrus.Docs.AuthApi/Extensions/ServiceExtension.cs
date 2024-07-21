@@ -3,9 +3,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Papyrus.Docs.AuthApi.Data;
+using Papyrus.Docs.AuthApi.Middleware;
 using Papyrus.Docs.AuthApi.Models.DbModels;
 using Papyrus.Docs.AuthApi.Seeds;
-using System.Text;
+using Papyrus.Docs.AuthApi.Services.Repositories;
 
 namespace Papyrus.Docs.AuthApi.Extensions
 {
@@ -16,9 +17,11 @@ namespace Papyrus.Docs.AuthApi.Extensions
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
-
-                services.AddIdentity<ApplicationUser, ApplicationRole>().AddEntityFrameworkStores<ApplicationDbContext>();
             });
+
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
+                    .AddEntityFrameworkStores<ApplicationDbContext>()
+                    .AddDefaultTokenProviders();
         }
 
         public static void AddAuthenticationExtension(this IServiceCollection services, IConfiguration configuration)
@@ -56,26 +59,30 @@ namespace Papyrus.Docs.AuthApi.Extensions
 
         public static void AddRepositoriesExtension(this IServiceCollection services)
         {
-
+            services.AddScoped<IAuthService, AuthService>();
         }
 
-        public static void SeedDataExtension(this IApplicationBuilder app)
+        public static void AddErrorHanldeMiddlewareExtension(this IApplicationBuilder app)
         {
-            using var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
-            var _userManager = serviceScope.ServiceProvider.GetService<UserManager<ApplicationUser>>()!;
-            var _roleManager = serviceScope.ServiceProvider.GetService<RoleManager<ApplicationRole>>()!;
-
-            SeedDefaultRole.SeedAsync(_roleManager).Wait();
-            SeedDefaultUser.SeedAsync(_userManager).Wait();
+            app.UseMiddleware<ErrorHanldeMiddleware>();
         }
 
-        public static void ApplyMigrationsExtension(this IApplicationBuilder app)
+        public static async Task SeedDataExtension(this IServiceProvider services)
         {
-            using var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            var _roleManager = services.GetRequiredService<RoleManager<ApplicationRole>>();
+            var _userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+
+            await SeedDefaultRole.SeedAsync(_roleManager);
+            await SeedDefaultUser.SeedAsync(_userManager);
+        }
+
+        public static async Task ApplyMigrationsExtension(this IServiceProvider services)
+        {
+            using var serviceScope = services.GetRequiredService<IServiceScopeFactory>().CreateScope();
             var _context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>()!;
             if (_context.Database.GetPendingMigrations().Any())
             {
-                _context.Database.Migrate();
+                await _context.Database.MigrateAsync();
             }
         }
     }

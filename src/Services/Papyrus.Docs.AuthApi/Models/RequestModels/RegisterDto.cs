@@ -20,6 +20,9 @@ namespace Papyrus.Docs.AuthApi.Models.RequestModels
         public string PhoneNumber { get; set; }
 
         [Required]
+        public string Role { get; set; }
+
+        [Required]
         public string Password { get; set; }
 
         [Compare("Password")]
