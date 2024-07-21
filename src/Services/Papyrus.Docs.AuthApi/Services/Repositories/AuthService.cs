@@ -10,20 +10,8 @@ using System.Security.Cryptography;
 
 namespace Papyrus.Docs.AuthApi.Services.Repositories
 {
-    public class AuthService : IAuthService
+    public class AuthService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ApplicationDbContext context, IConfiguration configuration) : IAuthService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<ApplicationRole> _roleManager;
-        private readonly ApplicationDbContext _context;
-        private readonly IConfiguration _configuration;
-
-        public AuthService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ApplicationDbContext context, IConfiguration configuration)
-        {
-            _userManager = userManager;
-            _roleManager = roleManager;
-            _context = context;
-            _configuration = configuration;
-        }
 
         #region Private methods
         private static string GenerateRefreshToken()
@@ -41,7 +29,7 @@ namespace Papyrus.Docs.AuthApi.Services.Repositories
                 ValidateAudience = false,
                 ValidateIssuer = false,
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["ApiSettings:SecretKey"]!)),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["ApiSettings:SecretKey"]!)),
                 ValidateLifetime = false
             };
 
@@ -66,19 +54,19 @@ namespace Papyrus.Docs.AuthApi.Services.Repositories
                 new(ClaimTypes.Email, user.Email ?? "")
             };
 
-            var roles = await _userManager.GetRolesAsync(user);
+            var roles = await userManager.GetRolesAsync(user);
 
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["ApiSettings:SecretKey"]!));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["ApiSettings:SecretKey"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: _configuration["ApiSettings:Issuer"],
-                audience: _configuration["ApiSettings:Audience"],
+                issuer: configuration["ApiSettings:Issuer"],
+                audience: configuration["ApiSettings:Audience"],
                 claims: claims,
                 expires: DateTime.Now.AddMinutes(30),
                 signingCredentials: creds
@@ -98,7 +86,7 @@ namespace Papyrus.Docs.AuthApi.Services.Repositories
                 return new ApiResponse<bool>(message: message, (int)HttpStatusCode.BadRequest); // 400
             }
 
-            var applicationUser = await _userManager.FindByEmailAsync(request.Email);
+            var applicationUser = await userManager.FindByEmailAsync(request.Email);
 
             if (applicationUser != null)
             {
@@ -117,20 +105,20 @@ namespace Papyrus.Docs.AuthApi.Services.Repositories
                 EmailConfirmed = true
             };
 
-            using var transaction = await _context.Database.BeginTransactionAsync();
+            using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
-                var result = await _userManager.CreateAsync(user, request.Password);
+                var result = await userManager.CreateAsync(user, request.Password);
                 if (!result.Succeeded)
                 {
                     message = "User creation failed! Please check user details and try again.";
                     return new ApiResponse<bool>(message: message, (int)HttpStatusCode.BadRequest); // 400
                 }
 
-                var role = await _roleManager.FindByNameAsync(request.Role)
+                var role = await roleManager.FindByNameAsync(request.Role)
                                 ?? throw new ApiException(message: "Role not found", statusCode: (int)HttpStatusCode.NotFound); // 404
 
-                var roleResult = await _userManager.AddToRoleAsync(user, role.Name);
+                var roleResult = await userManager.AddToRoleAsync(user, role.Name);
 
                 if (!roleResult.Succeeded)
                 {
@@ -171,7 +159,7 @@ namespace Papyrus.Docs.AuthApi.Services.Repositories
                 return new ApiResponse<AuthResponseModel>(message: message, (int)HttpStatusCode.BadRequest); // 400
             }
 
-            var user = await _userManager.FindByEmailAsync(request.Email);
+            var user = await userManager.FindByEmailAsync(request.Email);
 
             if (user == null)
             {
@@ -179,7 +167,7 @@ namespace Papyrus.Docs.AuthApi.Services.Repositories
                 return new ApiResponse<AuthResponseModel>(message: message, (int)HttpStatusCode.NotFound); // 404
             }
 
-            var result = await _userManager.CheckPasswordAsync(user, request.Password);
+            var result = await userManager.CheckPasswordAsync(user, request.Password);
 
             if (!result)
             {
@@ -191,7 +179,7 @@ namespace Papyrus.Docs.AuthApi.Services.Repositories
             var refreshToken = GenerateRefreshToken();
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpiryTime = DateTime.Now.AddMinutes(30);
-            await _userManager.UpdateAsync(user);
+            await userManager.UpdateAsync(user);
 
             var response = new AuthResponseModel
             {
@@ -214,7 +202,7 @@ namespace Papyrus.Docs.AuthApi.Services.Repositories
         {
             var principal = GetPrincipalFromExpiredToken(request.Token);
             var username = principal.Identity.Name;
-            var user = await _userManager.FindByNameAsync(username);
+            var user = await userManager.FindByNameAsync(username);
 
             if (user == null || user.RefreshToken != request.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
             {
@@ -226,7 +214,7 @@ namespace Papyrus.Docs.AuthApi.Services.Repositories
 
             user.RefreshToken = newRefreshToken;
             user.RefreshTokenExpiryTime = DateTime.Now.AddMinutes(30);
-            await _userManager.UpdateAsync(user);
+            await userManager.UpdateAsync(user);
 
             var response = new AuthResponseModel
             {
