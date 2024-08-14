@@ -23,6 +23,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContextExtension(builder.Configuration);
 builder.Services.AddRepositoriesExtension();
 
+builder.Services.AddCors(options => options.AddPolicy(name: "Origin", policy =>
+{
+    policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+}));
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -42,6 +47,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("Origin");
 
 app.UseAuthentication();
 
