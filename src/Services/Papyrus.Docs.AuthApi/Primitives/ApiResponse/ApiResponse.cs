@@ -1,5 +1,9 @@
 ﻿namespace Papyrus.Docs.AuthApi.Primitives.ApiResponse
 {
+    /// <summary>
+    /// ApiResponse class to handle response data
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class ApiResponse<T>
     {
         public ApiResponse() { }

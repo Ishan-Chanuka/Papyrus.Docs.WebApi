@@ -24,6 +24,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\Intergration\Papyrus.Docs.Email.Service\Papyrus.Docs.Email.Service.csproj" />
 	  <ProjectReference Include="..\..\Intergration\Papyrus.Docs.WebApi.ServiceDefaults\Papyrus.Docs.WebApi.ServiceDefaults.csproj" />
 	</ItemGroup>
 

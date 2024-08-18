@@ -6,6 +6,11 @@ namespace Papyrus.Docs.AuthApi.Seeds
 {
     public static class SeedDefaultUser
     {
+        /// <summary>
+        /// This method is used to seed the default user.
+        /// </summary>
+        /// <param name="userManager"> This is used to manage the user. </param>
+        /// <returns></returns>
         public static async Task SeedAsync(UserManager<ApplicationUser> userManager)
         {
             var defaultUser = new ApplicationUser

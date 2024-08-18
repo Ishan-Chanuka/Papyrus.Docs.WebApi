@@ -10,6 +10,13 @@ using System.Security.Cryptography;
 
 namespace Papyrus.Docs.AuthApi.Services.Repositories
 {
+    /// <summary>
+    /// This class contains the methods to handle the authentication.
+    /// </summary>
+    /// <param name="userManager"> The user manager is use to seed the default user to the db in this class. </param>
+    /// <param name="roleManager"> The role manager is use to seed the default role to the db in this class. </param>
+    /// <param name="context"> The application db context is used for data access. </param>
+    /// <param name="configuration"> The configuration is used to get the secret key, issuer and audience from the appsettings.json file. </param>
     public class AuthService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ApplicationDbContext context, IConfiguration configuration) : IAuthService
     {
 
@@ -233,5 +240,25 @@ namespace Papyrus.Docs.AuthApi.Services.Repositories
             };
         }
 
+        public async Task<ApiResponse<bool>> DisableUser(string userId)
+        {
+            var user = await userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return new ApiResponse<bool>(message: "User not found", statusCode: (int)HttpStatusCode.NotFound);
+            }
+
+            user.IsActive = false;
+            await userManager.UpdateAsync(user);
+
+            return new ApiResponse<bool>
+            {
+                StatusCode = (int)HttpStatusCode.OK, // 200
+                Message = "User disabled successfully",
+                IsSuccess = true,
+                Data = true
+            };
+        }
     }
 }

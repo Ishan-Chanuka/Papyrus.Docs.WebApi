@@ -1,17 +1,30 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Papyrus.Docs.AuthApi.Data;
 using Papyrus.Docs.AuthApi.Middleware;
 using Papyrus.Docs.AuthApi.Models.DbModels;
 using Papyrus.Docs.AuthApi.Seeds;
 using Papyrus.Docs.AuthApi.Services.Repositories;
+using Papyrus.Docs.Email.Service.Configurations;
+using Papyrus.Docs.Email.Service.Services.Interfaces;
+using Papyrus.Docs.Email.Service.Services.Repositories;
+using Papyrus.Docs.Email.Service.Templates;
 
 namespace Papyrus.Docs.AuthApi.Extensions
 {
+    /// <summary>
+    /// This class contains the extension methods for the services.
+    /// </summary>
     public static class ServiceExtension
     {
+        /// <summary>
+        /// This method is used to add the database context to the services.
+        /// </summary>
+        /// <param name="services"> This is used to add the services to the service collection. </param>
+        /// <param name="configuration"> This is used to get the connection string from the appsettings.json file. </param>
         public static void AddDbContextExtension(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -24,6 +37,11 @@ namespace Papyrus.Docs.AuthApi.Extensions
                     .AddDefaultTokenProviders();
         }
 
+        /// <summary>
+        /// This method is used to add the authentication to the services.
+        /// </summary>
+        /// <param name="services"> This is used to add the services to the service collection. </param>
+        /// <param name="configuration"> This is used to get the connection string from the appsettings.json file. </param>
         public static void AddAuthenticationExtension(this IServiceCollection services, IConfiguration configuration)
         {
             string? issure = configuration["ApiSettings:Issuer"];
@@ -57,16 +75,42 @@ namespace Papyrus.Docs.AuthApi.Extensions
             }
         }
 
+        /// <summary>
+        /// This method is used to get the email configuration from the appsettings.json file.
+        /// </summary>
+        /// <param name="services"> This is used to add the services to the service collection. </param>
+        /// <param name="configuration"> This is used to get the connection string from the appsettings.json file. </param>
+        public static void GetConfigurationExtension(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<EmailConfiguration>(configuration.GetSection("EmailConfiguration"));
+            services.AddSingleton(sp => sp.GetRequiredService<IOptions<EmailConfiguration>>().Value);
+        }
+
+        /// <summary>
+        /// This method is used to add the repositories to the services.
+        /// </summary>
+        /// <param name="services"> This is used to add the services to the service collection. </param>
         public static void AddRepositoriesExtension(this IServiceCollection services)
         {
             services.AddScoped<IAuthService, AuthService>();
+            services.AddTransient<RazorViewToStringRenderer>();
+            services.AddTransient<IEmailSenderService, EmailSenderService>();
         }
 
+        /// <summary>
+        /// This method is used to add the error handle middleware to the services.
+        /// </summary>
+        /// <param name="app"> This is used to add the middleware to the application. </param>
         public static void AddErrorHanldeMiddlewareExtension(this IApplicationBuilder app)
         {
             app.UseMiddleware<ErrorHanldeMiddleware>();
         }
 
+        /// <summary>
+        /// This method is used to seed the data to the database.
+        /// </summary>
+        /// <param name="services"> This is used to get the services from the service provider. </param>
+        /// <returns></returns>
         public static async Task SeedDataExtension(this IServiceProvider services)
         {
             var _roleManager = services.GetRequiredService<RoleManager<ApplicationRole>>();
@@ -76,6 +120,11 @@ namespace Papyrus.Docs.AuthApi.Extensions
             await SeedDefaultUser.SeedAsync(_userManager);
         }
 
+        /// <summary>
+        /// This method is used to apply the migrations to the database.
+        /// </summary>
+        /// <param name="services"> This is used to get the services from the service provider. </param>
+        /// <returns></returns>
         public static async Task ApplyMigrationsExtension(this IServiceProvider services)
         {
             using var serviceScope = services.GetRequiredService<IServiceScopeFactory>().CreateScope();

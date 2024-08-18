@@ -6,6 +6,11 @@ namespace Papyrus.Docs.AuthApi.Seeds
 {
     public static class SeedDefaultRole
     {
+        /// <summary>
+        /// This method is used to seed the default roles.
+        /// </summary>
+        /// <param name="roleManager"> This is used to manage the roles. </param>
+        /// <returns></returns>
         public static async Task SeedAsync(RoleManager<ApplicationRole> roleManager)
         {
             foreach (var role in Enum.GetValues(typeof(UserRoles)))

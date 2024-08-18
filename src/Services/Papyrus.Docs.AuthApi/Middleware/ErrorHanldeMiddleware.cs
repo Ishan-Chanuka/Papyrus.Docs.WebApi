@@ -4,8 +4,17 @@ using System.Text.Json;
 
 namespace Papyrus.Docs.AuthApi.Middleware
 {
+    /// <summary>
+    /// Middleware to handle exceptions
+    /// </summary>
+    /// <param name="next"> The next request delegate to call </param>
     public class ErrorHanldeMiddleware(RequestDelegate next)
     {
+        /// <summary>
+        /// Invoke the middleware to handle exceptions
+        /// </summary>
+        /// <param name="context"> The http context to handle </param>
+        /// <returns></returns>
         public async Task Invoke(HttpContext context)
         {
             try

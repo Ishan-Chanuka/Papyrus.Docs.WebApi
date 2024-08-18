@@ -21,7 +21,11 @@ builder.Services.AddSwaggerGen();
 
 // Extension methods for adding services to the container
 builder.Services.AddDbContextExtension(builder.Configuration);
+builder.Services.GetConfigurationExtension(builder.Configuration);
 builder.Services.AddRepositoriesExtension();
+
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+builder.Services.AddRazorPages();
 
 builder.Services.AddCors(options => options.AddPolicy(name: "Origin", policy =>
 {

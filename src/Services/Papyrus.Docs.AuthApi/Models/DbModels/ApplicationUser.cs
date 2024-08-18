@@ -8,6 +8,7 @@ namespace Papyrus.Docs.AuthApi.Models.DbModels
         public required string LastName { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime RefreshTokenExpiryTime { get; set; }
+        public bool IsActive { get; set; }
 
         public ICollection<ApplicationUserRole> UserRoles { get; set; }
     }
